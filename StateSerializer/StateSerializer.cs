@@ -51,10 +51,6 @@ namespace StateSerializerNs
             if (value == null)
                 return null;
 
-            //strings and value-types should not have ID tag
-            if (value.GetType().IsValueType || value is string)
-                return null;
-
             if (dic.ContainsKey(value) == false)
             {
                 nextId++;
@@ -123,7 +119,8 @@ namespace StateSerializerNs
 
         private bool WriteIdTagAsAttribute(object value)
         {
-            if (value == null)
+            //strings and value-types should not have ID tag
+            if (value == null || value.IsSystemValueType() || value is string)
                 return false;
 
             bool isKnown = dic.ContainsKey(value);
@@ -159,6 +156,9 @@ namespace StateSerializerNs
     {
         public bool Equals(object o1, object o2)
         {
+            if (o1 != null && o1.GetType().IsValueType)
+                return o1.Equals(o2);
+
             return Object.ReferenceEquals(o1, o2);
         }
 
@@ -174,11 +174,34 @@ namespace StateSerializerNs
         {
             return value == null
                         || value is string
-                        || value.GetType().IsValueType
+                        || IsSystemValueType(value)
                         || value is Type
                         || value is System.Reflection.Pointer
                         || value.GetType().BaseType == typeof(MulticastDelegate)
                         || namespacesToIgnore.Any(x => value.GetType().Namespace.StartsWith(x));
+        }
+
+        public static bool IsSystemValueType(this object value)
+        {
+            return value is bool
+                || value is byte
+                || value is char
+                || value is decimal
+                || value is double
+                || value is Enum
+                || value is float
+                || value is int
+                || value is long
+                || value is sbyte
+                || value is short
+                || value is uint
+                || value is ulong
+                || value is ushort
+                || value is DateTime
+                || value is TimeSpan;
+
+
+
         }
 
         public static string ToXmlValueStr(this object value)
