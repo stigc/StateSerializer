@@ -12,12 +12,12 @@ Example
     Console.WriteLine(str);
 
 
-        class MyBasClass : XmlDocument
+        class MyBaseClass : XmlDocument
         {
             protected string[] arrStrings = new string[] { "a", "b", "c" };
         }
 
-        class MyClass : MyBasClass
+        class MyClass : MyBaseClass
         {
             static DateTime date = DateTime.Now;
             private Type myTypeField = typeof(string);
