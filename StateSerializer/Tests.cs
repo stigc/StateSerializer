@@ -27,7 +27,7 @@ namespace StateSerializerNs.Tests
         public void ShowXmlTest()
         {
             var ss = new StateSerializer();
-            ss.IgnoreNamspace("System.Xml");
+            ss.IgnoreNamespace("System.Xml");
 
             var str = ss.ToXml(new MySubClass());
             Console.WriteLine(str);
@@ -48,13 +48,16 @@ namespace StateSerializerNs.Tests
         [Test]
         public void StructShouldSerialize()
         {
-            var instance = new MyStruct();
+            var instance = new MyStruct()
+            {
+                Id = 123
+            };
 
             var str = new StateSerializer()
                 .ToXml(instance);
 
             StringAssert.Contains("<Root Type=\"MyStruct\" Id=\"1\">", str);
-            StringAssert.Contains("<Id Type=\"Int32\">0</Id>", str);
+            StringAssert.Contains("<Id Type=\"Int32\">123</Id>", str);
         }
 
         [Test]

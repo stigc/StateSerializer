@@ -35,18 +35,18 @@ namespace StateSerializerNs
 
             using (xw = XmlWriter.Create(sb, settings))
             {
-                PrintClassRecursive(root, 0, "Root");
+                ClassToXml(root, 0, "Root");
             }
 
             return sb.ToString();
         }
 
-        public void IgnoreNamspace(String ns)
+        public void IgnoreNamespace(String ns)
         {
             NamespacesToIgnore.Add(ns);
         }
 
-        private string getIdTag(object value)
+        private string GetIdTag(object value)
         {
             if (value == null)
                 return null;
@@ -60,7 +60,7 @@ namespace StateSerializerNs
             return dic[value].ToString();
         }
 
-        private void PrintClassRecursive(object current, int level, String nodeName)
+        private void ClassToXml(object current, int level, String nodeName)
         {
             xw.WriteStartElement(nodeName);
 
@@ -95,7 +95,7 @@ namespace StateSerializerNs
                     WriteIdTagAsAttribute(value);
                     foreach (var arrayValue in value.AsIEnumerable())
                     {
-                        PrintClassRecursive(arrayValue, level + 1, "item");
+                        ClassToXml(arrayValue, level + 1, "item");
                     }
                     xw.WriteEndElement();
                 }
@@ -110,7 +110,7 @@ namespace StateSerializerNs
                         xw.WriteEndElement();
                     }
                     else
-                        PrintClassRecursive(value, level + 1, field.NameToStr());
+                        ClassToXml(value, level + 1, field.NameToStr());
                 }
             }
 
@@ -125,7 +125,7 @@ namespace StateSerializerNs
 
             bool isKnown = dic.ContainsKey(value);
 
-            var id = getIdTag(value);
+            var id = GetIdTag(value);
 
             if (id != null)
                 xw.WriteAttributeString("Id", id);
@@ -154,7 +154,7 @@ namespace StateSerializerNs
 
     class IdentityEqualityComparer : IEqualityComparer<object>
     {
-        public bool Equals(object o1, object o2)
+        public new bool Equals(object o1, object o2)
         {
             if (o1 != null && o1.GetType().IsValueType)
                 return o1.Equals(o2);
@@ -199,9 +199,6 @@ namespace StateSerializerNs
                 || value is ushort
                 || value is DateTime
                 || value is TimeSpan;
-
-
-
         }
 
         public static string ToXmlValueStr(this object value)

@@ -3,3 +3,6 @@
 ################################################################################
 
 /.vs
+/packages/NUnit.3.7.1
+/StateSerializer/bin/Debug
+/StateSerializer/obj
